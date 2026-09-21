@@ -10,14 +10,14 @@ Vehikel: dieselben **Lieferrouten-Kennzahlen** wie in den Vorgängern und der [p
 **Einordnung in die Reihe (die Kanten des Graphen):** Deep SVDD ist die **Fortsetzung des One-Class-SVM-Astes**. Die One-Class SVM hatte eine gemessene Schwäche: ihr Ergebnis hing an der Kernel-Breite γ (F1 0.95 oder 0.00 je nach γ) und an ν.
 Deep SVDD ersetzt den festen Kernel durch eine **gelernte Abbildung** (neuronales Netz ohne Bias, Zentrum c aus dem initialen Netz, Ziel: die Normalen in eine möglichst kleine Kugel um c ziehen). Die Frage der Demo: **verschwindet die Abhängigkeit von einem Regler – oder zieht sie nur um?**
 Ergebnis in Kürze: **sie zieht um – und das Training selbst schadet.** Das **untrainierte** Zufallsnetz hat AUC 0.995 und F1 0.90 – so gut wie der Isolation Forest –, nach 100 Epochen Training sind es 0.92 und 0.62, nach 1000 Epochen 0.89. Das Ziel „Kugel verkleinern“ ist nicht das Ziel „Anomalien finden“.
-Nur wo die Abbildung erst gelernt werden muss (Korrelationsbruch, Lücke), hilft das Training. Die Linie hat **keinen Konvergenzpunkt**; der letzte Nachbar wäre ein Autoencoder (nicht gebaut).
+Nur wo die Abbildung erst gelernt werden muss (Korrelationsbruch, Lücke), hilft das Training. Die Linie hat **keinen Konvergenzpunkt**; der letzte Nachbar, der [autoencoder-anomalie-demo](../autoencoder-anomalie-demo), ist gebaut (Rekonstruktionsfehler; die Linie ist damit komplett).
 ```
 elliptic-envelope-demo (Wurzel: robuste Ellipse)
   ├─ ecod-demo                  (Kontrast: verteilungsfrei)                              [gebaut]
   ├─ lof-demo → feature-bagging-demo (lokale Dichte; Ensembles gegen viele Merkmale)     [beide gebaut]
   ├─ ocsvm-demo → deepsvdd-demo (gelernte Grenze; gelernte Abbildung)                    [beide gebaut; dieses Stück: Deep SVDD]
   ├─ isolation-forest-demo → extended-isolation-forest-demo (Zufallsbäume)               [beide gebaut]
-  └─ Autoencoder                (Rekonstruktionsfehler)                                  [nicht gebaut]
+  └─ autoencoder-anomalie-demo  (Rekonstruktionsfehler)                                  [gebaut]
 ```
 
 | Frage | Ergebnis (300 Touren, 12 Merkmale, 10 % verstreute Anomalien im Abstand 6 Faktor-σ, ein Normalbereich, Rauschen 0.25; Netz mit 2 verdeckten Schichten der Breite 32, tanh, 8 Ausgaben, ohne Bias, Min-Max-Skalierung, 100 Epochen (Adam, Lernrate 0.001, Vollbatch), ν = 0.1 (Schwelle R² = 0.9-Quantil der Trainingsabstände), Netz-Seed 0; One-Class SVM ν = 0.1 und γ = 1 / p; Isolation Forest 100 Bäume × ψ = 256 und Schwelle 0.5, robust χ²-Quantil 0.975; Mittel über 5 feste Datensätze, Seeds 100000–100004) |

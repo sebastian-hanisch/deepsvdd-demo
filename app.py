@@ -41,6 +41,7 @@ from dsvdd_presets import (
     load_permalink_settings,
     randomize_net_seed,
     randomize_seed,
+    seed_widget,
     sync_query_params,
 )
 from dsvdd_visualization import (
@@ -205,6 +206,7 @@ with st.sidebar:
              "Korrelationsbruch: Deep SVDD 0.92, untrainiert 0.70, One-Class SVM 0.88, Isolation Forest 0.80, ECOD 0.56, LOF 0.99, robust 1.00.",
     )
     if kind not in ("gap", "decorrelated"):
+        seed_widget("strength_slider")
         strength = st.slider(
             "Abstand der Anomalien (Faktor-σ)", *bounds("strength_slider"), key="strength_slider", step=0.5,
             help="Wie weit die Anomalien im Faktorraum vom Normalen entfernt sind.",
@@ -212,7 +214,6 @@ with st.sidebar:
         st.session_state["_strength_kept"] = strength
     else:
         strength = float(st.session_state.get("_strength_kept", C.DEFAULT_STRENGTH))
-        st.session_state["strength_slider"] = strength
 
     st.markdown("**Deep SVDD**")
     variant = st.selectbox(
@@ -268,14 +269,15 @@ with st.sidebar:
              "dann entscheidet nur die Rangfolge, aber der Anteil muss bekannt sein.",
     )
     if threshold_kind == "standard":
+        seed_widget("quantile_slider")
         quantile = st.slider(
             "Schwelle: χ²-Quantil (robust)", *bounds("quantile_slider"), key="quantile_slider", step=0.001, format="%.3f",
             help="Ab welchem Anteil der χ²-Verteilung eine Tour bei der robusten Schätzung als Anomalie gilt. Bei 0.9 / 0.95 / 0.975 / 0.99 / 0.999: F1 der robusten Schätzung 0.67 / 0.77 / 0.84 / 0.89 / 0.90.",
         )
         st.session_state["_quantile_kept"] = quantile
         share = int(st.session_state.get("_share_kept", C.DEFAULT_SHARE))
-        st.session_state["share_slider"] = share
     else:
+        seed_widget("share_slider")
         share = st.slider(
             "Angenommener Anteil der Anomalien [%]", *bounds("share_slider"), key="share_slider",
             help="Wie viele Touren als Anomalie markiert werden (die größten Werte, für alle vier Detektoren). Beim wahren Anteil 10 % ist der F1 bei angenommenen 2 / 5 / 10 / 20 / 40 % bei Deep SVDD (Voreinstellung) "
@@ -283,7 +285,6 @@ with st.sidebar:
         )
         st.session_state["_share_kept"] = share
         quantile = float(st.session_state.get("_quantile_kept", C.DEFAULT_QUANTILE))
-        st.session_state["quantile_slider"] = quantile
     seed = st.number_input("Zufalls-Seed (Touren)", *bounds("seed_input"), key="seed_input", step=1)
     st.button("🎲 Neue Aufnahme generieren", width="stretch", on_click=randomize_seed, help="Würfelt einen neuen Zufalls-Seed für die Touren und die Anomalien.")
 

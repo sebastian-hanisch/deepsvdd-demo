@@ -84,10 +84,24 @@ def kind_options(n_modes):
 def init_session_state_defaults():
     """Fehlende Zustände auffüllen; ausgeblendete Regler kehren zum zuletzt gewählten Wert zurück; eine ungültige Art wird zurückgesetzt."""
     for state_key, spec in SETTING_SPECS.items():
-        if state_key not in st.session_state:
-            st.session_state[state_key] = st.session_state.get(KEPT[state_key], spec.default) if state_key in KEPT else spec.default
+        if state_key not in KEPT and state_key not in st.session_state:       # ausblendbare Regler: siehe seed_widget
+            st.session_state[state_key] = spec.default
     if st.session_state["kind_select"] not in kind_options(st.session_state["n_modes_slider"]):
         st.session_state["kind_select"] = C.DEFAULT_KIND
+
+
+def seed_widget(state_key):
+    """Vor dem Zeichnen eines ausblendbaren Reglers: fehlt sein Zustand, kommt der zuletzt gewählte (oder der Standard-) Wert.
+    Ein Wert, der in einem Lauf ohne den Regler in den Zustand des Reglers geschrieben wird, erscheint später als Mindestwert im Regler, während die App mit dem geschriebenen Wert rechnet."""
+    if state_key not in st.session_state:
+        st.session_state[state_key] = st.session_state.get(KEPT[state_key], SETTING_SPECS[state_key].default)
+
+
+def stash_kept_widget_state():
+    """Permalink und Preset legen den Wert eines ausblendbaren Reglers nur in KEPT ab (der Regler holt ihn sich mit `seed_widget`, sobald er gezeichnet wird)."""
+    for state_key, kept in KEPT.items():
+        if state_key in st.session_state:
+            st.session_state[kept] = st.session_state.pop(state_key)
 
 
 def bounds(state_key):
@@ -117,6 +131,7 @@ def load_permalink_settings():
     st.session_state["quantile_slider"] = round(st.session_state.get("quantile_slider", C.DEFAULT_QUANTILE) * 1000) / 1000
     st.session_state["nu_slider"] = round(st.session_state.get("nu_slider", C.DEFAULT_NU) * 100) / 100
     st.session_state["width_select"] = _width(st.session_state.get("width_select", C.DEFAULT_WIDTH))
+    stash_kept_widget_state()
     st.session_state["permalink_loaded"] = True
 
 
@@ -134,6 +149,7 @@ def apply_preset(name):
         st.session_state[state_key] = C.PRESETS[name][key]
     for key, kept in PRESET_KEPT.items():
         st.session_state[kept] = C.PRESETS[name][key]
+    stash_kept_widget_state()
 
 
 def randomize_seed():

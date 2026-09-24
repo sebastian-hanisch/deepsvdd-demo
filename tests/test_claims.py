@@ -421,7 +421,7 @@ def test_wrong_share_table():
 def test_cost_table():
     times = {(t["n"], t["p"]): t for t in ev.cost_table()["times"]}
     for t in times.values():
-        assert t["dsvdd"] < 0.5 and t["dsvdd_1000"] > 4 * t["dsvdd"] and t["dsvdd_1000"] < 3.0 and t["dsvdd"] > 1.5 * t["ocsvm"]          # größenordnungsmäßig: einige zehn ms, das Mehrfache der One-Class SVM
+        assert t["dsvdd"] < 0.5 and t["dsvdd_1000"] > 4 * t["dsvdd"] and t["dsvdd_1000"] < 3.0 and t["dsvdd"] > t["ocsvm"]          # größenordnungsmäßig: einige zehn ms; nur "langsamer als die One-Class SVM" - der Faktor schwankt mit dem Rechner (lokal 4-8, auf dem CI-Runner ~1,5)
         assert t["dsvdd"] < t["iforest"] * 1.5 + 0.02
     assert times[(600, 12)]["dsvdd"] > times[(100, 12)]["dsvdd"]
 

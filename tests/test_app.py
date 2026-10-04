@@ -250,7 +250,7 @@ def test_every_plotly_chart_has_an_explicit_unique_key():
 def test_app_has_no_dead_file_links_and_the_verbatim_footer():
     source = (ROOT / "app.py").read_text(encoding="utf-8")
     assert not re.findall(r"\]\([a-z_]+\.py\)", source)
-    assert "https://sebastianhanisch.net/kontakt.html" in source and "Interesse an einer maßgeschneiderten Lösung für" in source
+    assert "https://sebastianhanisch.net/ueber-mich.html" in source
 
 
 def test_net_seed_button_changes_only_the_network_seed_and_the_bias_toggle_is_a_real_checkbox():

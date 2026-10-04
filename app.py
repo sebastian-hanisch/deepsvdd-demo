@@ -135,7 +135,7 @@ und das Training zieht die Normalen in eine **möglichst kleine Kugel** um ein f
 st.caption(
     "Anders als die Fall-Demos im Portfolio, die an einem Anwendungsfall mehrere Verfahren vergleichen, zeigt diese Demo - achtes Stück der Anomalie-Erkennung-Linie der \"Konzepte\"-Reihe - **ein** Verfahren an einem wachsenden Beispiel. "
     "Szenario, One-Class SVM, LOF, Isolation Forest und die robuste Schätzung der Wurzel sind wortgleich aus den Vorgänger-Demos übernommen (die klassische Schätzung entfällt, damit die Balken lesbar bleiben); "
-    "als Bezug laufen zusätzlich das **untrainierte** Netz, die One-Class SVM mit breitem Kernel, LOF und ECOD mit. Die Linie hat keinen Konvergenzpunkt; Deep SVDD ist die Fortsetzung des One-Class-SVM-Astes, der letzte Nachbar wäre ein Autoencoder (noch nicht gebaut)."
+    "als Bezug laufen zusätzlich das **untrainierte** Netz, die One-Class SVM mit breitem Kernel, LOF und ECOD mit. Die Linie hat keinen Konvergenzpunkt; Deep SVDD ist die Fortsetzung des One-Class-SVM-Astes, der letzte Nachbar ist der Autoencoder (gebaut)."
 )
 
 with st.expander("So funktioniert Deep SVDD", expanded=True):
@@ -587,7 +587,7 @@ st.markdown(
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
 | **Das Training verbessert die Abbildung** | Im Standardfall verschlechtert es sie: AUC **0.995 vor dem Training**, 0.92 nach 100 und 0.89 nach 1000 Epochen (F1 0.90 → 0.62); bei 45 % Anomalien 0.99 → 0.83, bei einer dichten Gruppe (30 %) 0.80 → **0.18**. Ein zufälliges glattes Netz ist schon ein guter Detektor; das Ziel „Kugel verkleinern“ ist nicht das Ziel „Anomalien finden“. | Isolation Forest, One-Class SVM mit breitem Kernel |
-| **Man weiß, wann man aufhören muss** | Das beste Epochen-Zahl hängt vom Szenario ab (Standardfall 0, Korrelationsbruch etwa 100, Lücke etwa 190) und ist ohne Etiketten nicht zu erkennen. Über 10 Netz-Seeds streut die AUC nach 100 Epochen mit 0.05 (schlechtestes Netz 0.76). | (keiner) |
+| **Man weiß, wann man aufhören muss** | Die beste Epochenzahl hängt vom Szenario ab (Standardfall 0, Korrelationsbruch etwa 100, Lücke etwa 190) und ist ohne Etiketten nicht zu erkennen. Über 10 Netz-Seeds streut die AUC nach 100 Epochen mit 0.05 (schlechtestes Netz 0.76). | (keiner) |
 | **Die Eingaben passen zum bias-freien Netz** | Mit zentriert standardisierten Eingaben liegen die Normalen im Ursprung, den das Netz auf 0 abbildet: die AUC sinkt auf 0.48 (300 Epochen) bzw. 0.32 (1000). | Min-Max-Skalierung, Bias |
 | **Das bias-freie Netz verhindert den Kollaps** | Es verlangsamt ihn: die Streuung der Ausgaben fällt in allen Konfigurationen (0.082 → 0.004 nach 1000 Epochen); die Rangfolge überlebt es bei Min-Max-Eingaben (0.87). Mit ReLU fällt die AUC nach 1000 Epochen auf 0.49. | Aktivierung, Epochen |
 | **ν ist der Anteil, den man kennt** | Die Schwelle R² markiert ν der Touren, unabhängig von den Daten (F1 0.13 bei ν = 0.01, 0.62 bei 0.1, 0.32 bei 0.5). Das Training lernt die Anomalien mit: AUC 0.97 bei 2 %, 0.83 bei 45 % Anomalien. | ECOD, Isolation Forest |
@@ -597,7 +597,7 @@ st.markdown(
 """
 )
 st.caption(
-    "Die Nachbarn der Anomalie-Erkennung-Linie: die Wurzel Elliptic Envelope, LOF, Feature Bagging, Isolation Forest, Extended IF, ECOD und die One-Class SVM (gebaut), ein Autoencoder (noch nicht gebaut). "
+    "Die Nachbarn der Anomalie-Erkennung-Linie: die Wurzel Elliptic Envelope, LOF, Feature Bagging, Isolation Forest, Extended IF, ECOD und die One-Class SVM und der Autoencoder (alle gebaut). "
     "Keiner ist überlegen: Deep SVDD ersetzt den Kernel durch eine gelernte Abbildung - und ersetzt die Abhängigkeit von γ durch eine von Epochen, Breite, Skalierung, Aktivierung und dem Zufall der Initialisierung."
 )
 
@@ -628,6 +628,6 @@ st.markdown("---")
 
 st.caption(
     "Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – "
-    "Operations Research und Machine Learning. Interesse an einer maßgeschneiderten Lösung für "
-    "Ihr Unternehmen? [Kontakt aufnehmen](https://sebastianhanisch.net/kontakt.html)"
+    "Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). "
+    "Mehr zur Reihe: [Anomalie-Erkennung: Ellipse bis Autoencoder](https://sebastianhanisch.net/konzepte-anomalie-erkennung.html)."
 )

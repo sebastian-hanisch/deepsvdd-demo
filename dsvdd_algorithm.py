@@ -139,7 +139,7 @@ class Model:
     outputs: np.ndarray              # [n, d] Ausgaben der Trainings-Touren
     snapshots: dict                  # Epoche -> Ausgaben (Kopie), inkl. 0 und n_epochs
     r2_snapshots: dict               # Epoche -> R^2 (Quantil der Abstände zu diesem Zeitpunkt)
-    loss_history: np.ndarray         # [n_epochs]
+    loss_history: np.ndarray         # [n_epochs + 1] Zielfunktion, Index k = nach k Schritten (0 = untrainiert, letzter = fertiges Netz); leer bei 0 Epochen
     mean: np.ndarray
     scale: np.ndarray
     Z: np.ndarray
@@ -209,6 +209,8 @@ def fit_deep_svdd(X, depth=2, width=32, n_out=8, activation="tanh", variant="one
         if epoch in wanted:
             snapshots[epoch] = output(weights, biases, Z, activation).copy()
             r2_snapshots[epoch] = quantile_r2(dist2(), nu)
+    if n_epochs > 0:
+        loss_history = np.append(loss_history, loss_and_gradients(weights, biases, Z, c, activation, variant, nu, r2, weight_decay)[0])        # Zielfunktion des fertigen Netzes (Index k = nach k Schritten)
     d2 = dist2()
     r2 = quantile_r2(d2, nu)                                                     # Schwelle: (1 - nu)-Quantil der Trainingsabstände (bei Soft-Boundary die letzte Aktualisierung von R^2)
     return Model(weights=weights, biases=biases, activation=activation, depth=depth, width=width, n_out=n_out, variant=variant, nu=float(nu), center=c, r2=float(r2), outputs=output(weights, biases, Z, activation),

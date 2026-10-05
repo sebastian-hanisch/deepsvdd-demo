@@ -183,7 +183,7 @@ def build_training(loss_history, epochs, aucs, spreads):
     """Links der Wert der Zielfunktion über die Epochen (logarithmische Achse), rechts AUC (rosa) und Ausgabestreuung (grau, gestrichelt) an den Momentaufnahmen."""
     fig = make_subplots(rows=1, cols=2, subplot_titles=("Zielfunktion", "AUC und Ausgabestreuung"), horizontal_spacing=0.12, specs=[[{}, {"secondary_y": True}]])
     if len(loss_history):
-        fig.add_trace(go.Scatter(x=np.arange(1, len(loss_history) + 1), y=loss_history, mode="lines", line=dict(color=BLUE, width=3), hoverinfo="skip", showlegend=False), row=1, col=1)
+        fig.add_trace(go.Scatter(x=np.arange(len(loss_history)), y=loss_history, mode="lines", line=dict(color=BLUE, width=3), hoverinfo="skip", showlegend=False), row=1, col=1)
     xs = [str(e) for e in epochs]
     fig.add_trace(go.Scatter(x=xs, y=aucs, mode="lines+markers", line=dict(color=PINK, width=3), name="AUC (Rangfolge)", hoverinfo="skip"), row=1, col=2, secondary_y=False)
     fig.add_trace(go.Scatter(x=xs, y=spreads, mode="lines+markers", line=dict(color=GRAY, width=2, dash="dash"), name="Streuung der Ausgaben", hoverinfo="skip"), row=1, col=2, secondary_y=True)

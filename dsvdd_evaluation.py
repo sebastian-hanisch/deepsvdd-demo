@@ -39,6 +39,11 @@ def roc_auc(score, positive):
     return float((ranks[positive].sum() - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg))
 
 
+def _group_ends(sorted_scores):
+    """Index des letzten Elements jeder Gruppe gleicher Werte in einer sortierten Reihe (jede Schwelle trennt nur zwischen verschiedenen Werten)."""
+    return np.flatnonzero(np.concatenate([sorted_scores[1:] != sorted_scores[:-1], [True]]))
+
+
 def average_precision(score, positive):
     """Mittlere Präzision (Fläche unter der Precision-Recall-Kurve als Summe über die Treffer). NaN ohne Anomalien."""
     positive = np.asarray(positive, dtype=bool)
@@ -46,8 +51,11 @@ def average_precision(score, positive):
         return float("nan")
     order = np.argsort(-np.asarray(score), kind="mergesort")
     hits = positive[order]
-    precision_at = np.cumsum(hits) / (np.arange(len(hits)) + 1.0)
-    return float(precision_at[hits].sum() / positive.sum())
+    ends = _group_ends(np.asarray(score)[order])                       # gleiche Werte bilden EINE Schwelle (sonst hinge der Wert von der Zeilenreihenfolge ab)
+    tp = np.cumsum(hits)[ends]
+    precision = tp / (ends + 1.0)
+    recall = tp / positive.sum()
+    return float(np.sum(np.diff(np.concatenate([[0.0], recall])) * precision))
 
 
 def flag_metrics(flagged, positive):
@@ -67,8 +75,9 @@ def roc_curve(score, positive):
     positive = np.asarray(positive, bool)
     order = np.argsort(-np.asarray(score), kind="mergesort")
     hits = positive[order]
-    tpr = np.concatenate([[0.0], np.cumsum(hits) / max(hits.sum(), 1)])
-    fpr = np.concatenate([[0.0], np.cumsum(~hits) / max((~hits).sum(), 1)])
+    ends = _group_ends(np.asarray(score)[order])                       # bei gleichen Werten nur die Punkte an den Schwellen (Diagonale statt Treppe in Zeilenreihenfolge)
+    tpr = np.concatenate([[0.0], np.cumsum(hits)[ends] / max(hits.sum(), 1)])
+    fpr = np.concatenate([[0.0], np.cumsum(~hits)[ends] / max((~hits).sum(), 1)])
     return fpr, tpr
 
 

@@ -1,12 +1,12 @@
 """ECOD (Empirical Cumulative distribution functions for Outlier Detection, numpy von Grund auf, nach Li, Zhao, Hu, Botta, Ionescu und Chen).
 
 Je Merkmal j werden die empirischen Verteilungsfunktionen der Randverteilung bestimmt: links F_l(x) = #{x_i <= x} / n und rechts F_r(x) = #{x_i >= x} / n (Bindungen zählen auf beiden Seiten mit, die
-Werte liegen in [1/n, 1]). Der Beitrag eines Merkmals ist die negative Log-Schwanzwahrscheinlichkeit -log F - null in der Mitte, log n am äußersten Rand. Es gibt keinen einzigen Parameter.
+Werte liegen in [1/n, 1]). Der Beitrag eines Merkmals ist die negative Log-Tail-Wahrscheinlichkeit -log F - null in der Mitte, log n am äußersten Rand. Es gibt keinen einzigen Parameter.
 
 Kombination der Merkmale (Variante):
 - **paper**: O_left = sum_j -log F_l, O_right = sum_j -log F_r, O_auto = die Seite, auf die die Schiefe des Merkmals zeigt (links bei negativer Schiefe, sonst rechts); Wert = max(O_left, O_right, O_auto).
 - **auto**: nur O_auto.
-- **both**: je Merkmal der größere der beiden Schwänze, summiert (zweiseitig).
+- **both**: je Merkmal der größere der beiden Tails, summiert (zweiseitig).
 - **twosided**: je Merkmal -log(min(1, 2 * min(F_l, F_r))), summiert - zweiseitige p-Werte; unter Unabhängigkeit exakt Gamma(p, 1), die Grundlage einer Schwelle ohne Vorwissen.
 - **pyod**: die Implementierung in PyOD (je Merkmal das Maximum aus links, rechts und einem Schiefe-Term, dabei zählt nur das Vorzeichen der Schiefe: bei genau 0 beide Seiten; summiert) - zum Abgleich.
 
@@ -15,7 +15,7 @@ Unter Unabhängigkeit und stetigen Randverteilungen ist -log F ~ Exp(1), eine Su
 import numpy as np
 
 VARIANTS = ("paper", "twosided", "both", "auto", "pyod")
-VARIANT_LABELS = {"paper": "Paper: Maximum der drei Summen", "twosided": "zweiseitig mit p-Werten (Fisher)", "both": "je Merkmal der größere Schwanz", "auto": "nur nach Schiefe (O_auto)",
+VARIANT_LABELS = {"paper": "Paper: Maximum der drei Summen", "twosided": "zweiseitig mit p-Werten (Fisher)", "both": "je Merkmal der größere Tail", "auto": "nur nach Schiefe (O_auto)",
                   "pyod": "PyOD-Implementierung"}
 
 
